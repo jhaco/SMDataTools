@@ -5,8 +5,9 @@
 
 #### Notes: 
 
-- Input and output directories must be specified in config.ini file.
-- SMParser is redefined as "collect" in Stepmania Data Tools.
+- Input and output directories must be specified in config.ini file for each script.
+
+###### SMParser is redefined as "collect" in Stepmania Data Tools.
 
 ---
 
