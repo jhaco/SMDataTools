@@ -8,6 +8,8 @@
 - Input and output directories must be specified in config.ini file.
 - SMParser is redefined as "collect" in Stepmania Data Tools.
 
+---
+
 <details close>
   <summary>Changelog</summary>
         
