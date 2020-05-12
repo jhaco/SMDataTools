@@ -1,4 +1,5 @@
 import argparse
+import configparser
 import time
 from os import makedirs
 from os.path import join, isdir, dirname, realpath
@@ -15,13 +16,13 @@ if __name__ == '__main__':
 
     data_tool = argparse.ArgumentParser(description='Stepmania Data Tools')
     data_tool.add_argument('script', choices=SCRIPT_MAP.keys(), help='Set script.')
-    data_tool.add_argument('-i', '--input',  required = True, help='Set input directory.')
-    data_tool.add_argument('-o', '--output', required = True, help='Set output directory.')
-
     args = data_tool.parse_args()
     running_script = SCRIPT_MAP[args.script]
-    input_dir  = join(dir, args.input)
-    output_dir = join(dir, args.output)
+    
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+    input_dir = config.get(args.script, 'input')
+    output_dir = config.get(args.script, 'output')
 
     if not isdir(input_dir):
         print("Invalid input directory argument.")
