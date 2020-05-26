@@ -16,6 +16,7 @@
         
   Sorted by most recent:
   
+  - fixed error message; ensured note data matches the 4-note dance-singles mode, not 8-note dance-doubles
   - added configuration file to reduce tedium in specifying input/output folders
   
 </details>
