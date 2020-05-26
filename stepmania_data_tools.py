@@ -18,7 +18,7 @@ if __name__ == '__main__':
     data_tool.add_argument('script', choices=SCRIPT_MAP.keys(), help='Set script.')
     args = data_tool.parse_args()
     running_script = SCRIPT_MAP[args.script]
-    
+
     config = configparser.ConfigParser()
     config.read('config.ini')
     input_dir = config.get(args.script, 'input')
@@ -29,10 +29,8 @@ if __name__ == '__main__':
     else:
         if not isdir(output_dir):
             makedirs(output_dir)
-            print("Output directory missing: %s\nGenerated specified output folder." % args.output)
+            print("Output directory missing: %s\nGenerated specified output folder." % output_dir)
         running_script(input_dir, output_dir)
 
     end_time = time.time()
     print("Elapsed time was %g seconds" % (end_time - start_time))
-
-        
