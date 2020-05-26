@@ -44,7 +44,8 @@ def parse_sm(sm_file):
     measure         = []
     measure_index   = 0
 
-    read_notes      = False
+    read_notes          = False
+    not_dance_single    = False # ensures data matches the 4-note dance-singles mode, not the 8-note dance-double
 
     read_values = '' # contains combined data while not reading notes; structured '#type:data;'
     for i, line in enumerate(sm_file):
@@ -72,8 +73,13 @@ def parse_sm(sm_file):
 
         if read_notes:   #start of note processing
             if line.startswith('#NOTES:'): # marks the beginning of each difficulty and its notes
+                not_dance_single = False
                 measure_index = 0
+                if sm_file[i+1].lstrip(' ').rstrip(':\n') != 'dance-single':
+                    not_dance_single = True
                 current_difficulty = sm_file[i+3].lstrip(' ').rstrip(':\n') # difficulty always found 3 lines down
+            elif not_dance_single:
+                continue
             elif line.startswith((',', ';')): # marks the end of each measure
                 notes_and_timings = calculate_timing(measure, measure_index, step_dict['bpm'], step_dict['offset'])
                 step_dict['notes'][current_difficulty].extend(notes_and_timings)
