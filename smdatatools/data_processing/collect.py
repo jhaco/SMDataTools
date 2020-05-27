@@ -1,3 +1,5 @@
+import logging
+
 from collections import defaultdict
 from os import walk
 from os.path import join
@@ -99,6 +101,7 @@ def parse_sm(sm_file):
 #===================================================================================================
 
 def main_collect(input_dir, output_dir):
+    successful_files = 0
     for root, dirs, files in walk(input_dir):
         sm_files = [file for file in files if file.endswith('.sm')]
         ogg_files = [file for file in files if file.endswith('.ogg')]
@@ -114,5 +117,9 @@ def main_collect(input_dir, output_dir):
                     write_file(pregenerate_txt(sm_data), join(output_dir, new_file + '.txt'))
                     # move and rename .ogg file to output dir
                     copyfile(join(root, ogg_files[format_ogg_dict[new_file]]), join(output_dir, new_file + '.ogg'))
+                    successful_files+=1
                 except Exception as ex:
-                    print('Write failed for %s: %r' % (sm_file, ex))
+                    logging.warning('Write failed for %s: %r' % (sm_file, ex))
+            else:
+                logging.warning('Skipped parsing for %s. Sound file not found' % (new_file))
+    return successful_files
