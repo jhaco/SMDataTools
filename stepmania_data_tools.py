@@ -33,13 +33,12 @@ if __name__ == '__main__':
     start_time = time.time()
 
     if not isdir(input_dir):
-        logging.error('Invalid input directory argument.')
+        print('Invalid input directory argument. Check the configuration file.')
     else:
         if not isdir(output_dir):
             makedirs(output_dir)
             logging.warning('Output directory missing: ' + output_dir)
             logging.info('Generated specified output folder.')
         successful_files = running_script(input_dir, output_dir)
-
-    end_time = time.time()
-    print('Successfully processed %s files in %g seconds' % (successful_files, end_time - start_time))
+        end_time = time.time()
+        print('Successfully processed %s files in %g seconds' % (successful_files, end_time - start_time))
