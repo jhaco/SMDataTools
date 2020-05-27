@@ -11,6 +11,8 @@ from smdatatools.data_processing.write import main_write
 
 if __name__ == '__main__':
     # logger setup
+    if not isdir('logs'):
+        makedirs('logs')
     logging.config.fileConfig('logging.ini')
 
     # argument parser setup
