@@ -1,3 +1,5 @@
+import logging
+
 from collections import defaultdict
 from functools import reduce
 from math import ceil, gcd
@@ -138,6 +140,7 @@ def parse_txt(txt_file):
 #===================================================================================================
 
 def main_write(input_dir, output_dir):
+    successful_files = 0
     for root, dirs, files in walk(input_dir):
         txt_files = [file for file in files if file.endswith('.txt')]
         ogg_files = [file for file in files if file.endswith('.ogg')]
@@ -154,11 +157,12 @@ def main_write(input_dir, output_dir):
                     makedirs(output_folder)
                 # write text sm data to output dir
                 write_file(pregenerate_sm(new_file, txt_data), join(output_folder, new_file + '.sm'))
+                successful_files+=1
             except Exception as ex:
-                print('Write failed for %s: %r' % (txt_file, ex))
+                logging.warning('Write failed for %s: %r' % (txt_file, ex))
             try:
                 # move and rename .ogg file to output dir
                 copyfile(join(root, ogg_files[format_ogg_dict[new_file]]), join(output_folder, new_file + '.ogg'))
             except Exception as ex:
-                print('Sound file not found for %s' % (new_file))
-
+                logging.warning('Sound file not found for %s' % (new_file))
+    return successful_files
