@@ -1,51 +1,42 @@
-import logging
-
 from collections import defaultdict
-from math import ceil
-from os import makedirs, walk
-from os.path import join, isdir
-from shutil import copyfile
-
-from smdatatools.common.file_utils import read_file, write_file, strip_filename
-from smdatatools.components.measure import Measure
 
 class OutputProcessor:
 
-    def pregenerate_sm_output(file_name: str, step_dict: defaultdict(list)) -> str:
+    def pregenerate_sm_output(file_name: str, note_data: defaultdict(list)) -> str:
         # pre-generate .sm output data
-        title  = '#TITLE:%s;\n' % step_dict['title']
+        title  = '#TITLE:%s;\n' % note_data['title']
         artist = '#ARTIST:jhaco vs cpuguy96;\n'
         music  = '#MUSIC:%s.ogg;\n' % file_name
         select = 'SELECTABLE:YES;\n'
-        bpm    = 'BPMS:0.000=%s;\n\n' % str(step_dict['bpm'])
-        note_data = ''
+        bpm    = 'BPMS:0.000=%s;\n\n' % str(note_data['bpm'])
+        notes = ''
 
-        for difficulty in step_dict['notes'].keys():
+        for difficulty in note_data['notes'].keys():
 
-            note_data += '//---------------dance-single - ----------------\n'
-            note_data += '#NOTES:\n'
-            note_data += '     dance-single:\n'
-            note_data += '     :\n'
-            note_data += '     %s:\n' % difficulty
-            note_data += '     8:\n'
-            note_data += '     1.000,1.000,1.000,1.000,1.000:\n'
+            notes += '//---------------dance-single - ----------------\n'
+            notes += '#NOTES:\n'
+            notes += '     dance-single:\n'
+            notes += '     :\n'
+            notes += '     %s:\n' % difficulty
+            notes += '     8:\n'
+            notes += '     1.000,1.000,1.000,1.000,1.000:\n'
         
-            for note in step_dict['notes'][difficulty]:
-                    note_data += note + '\n'
+            for note in note_data['notes'][difficulty]:
+                    notes += note + '\n'
 
-        return ''.join((title, artist, music, select, bpm, note_data))
+        return ''.join((title, artist, music, select, bpm, notes))
 
-    def pregenerate_txt_output(step_dict) -> str:
+    def pregenerate_txt_output(note_data: defaultdict(list)) -> str:
         # pre-generate output data
-        title = 'TITLE %s\n' % step_dict['title']
-        bpm   = 'BPM   %s\n' % str(step_dict['bpm'])
-        note_data = 'NOTES\n'
-        for difficulty in step_dict['notes'].keys():
-            note_data += 'DIFFICULTY %s\n' % difficulty
-            for note in step_dict['notes'][difficulty]:
-                note_data += note + '\n'
+        title = 'TITLE %s\n' % note_data['title']
+        bpm   = 'BPM   %s\n' % str(note_data['bpm'])
+        notes = 'NOTES\n'
+        for difficulty in note_data['notes'].keys():
+            notes += 'DIFFICULTY %s\n' % difficulty
+            for note in note_data['notes'][difficulty]:
+                notes += note + '\n'
 
-        return ''.join((title, bpm, note_data))
+        return ''.join((title, bpm, notes))
 
 #def main_write(input_dir, output_dir):
 #    successful_files = 0

@@ -3,7 +3,6 @@ from math import gcd, ceil
 
 class Measure:
 
-    
     def calculate_timing(measure, measure_index, bpm, offset):
         # calculate time in seconds for each line in the measure:
         #   BPM       = beats/minute -> BPS = beats/second = BPM/60
@@ -17,37 +16,37 @@ class Measure:
         # returns the note/timing pair, if the note exists
         return [measure[i] + ' ' + str(i * note_256 * fraction_256 + measure_timing - offset) for i, is_set in enumerate(measure) if is_set != None]
 
-    def reduce_measure(note_positions) -> int:
+    def find_gcd(note_positions) -> int:
         # attempts to fit the note positions into either a 
         # 256, 128, 64, 32, 16, 8 or 4 note measure based on spacing 
         # found by getting the greatest common denominator
         # of all gaps between each note position
-        greatest_gap = reduce(gcd, note_positions + [256])
+        gcd_gap = reduce(gcd, note_positions + [256])
 
         # if the gap returns a 256/128 = 2 note measure, 
         # we'll need to adjust the gap for a 256/64 = 4 note measure
-        if greatest_gap == 128: 
-            greatest_gap = 64
+        if gcd_gap == 128: 
+            gcd_gap = 64
     
-        return int(256/greatest_gap)
+        return int(gcd_gap)
 
     def generate_measure(notes, note_positions) -> list[str]:
     
         # we'll want to trim as much output as possible
         # by reducing the measure size
-        measure_size = Measure.reduce_measure(note_positions)
+        measure_gcd = Measure.find_gcd(note_positions)
     
         # place notes in the generated measure
         # by calculating the adjusted note position
         # relative to the old note position
-        generated_measure = ['0000'] * measure_size
+        generated_measure = ['0000'] * int(256/measure_gcd)
         for note, p_old in enumerate(note_positions):
-            p_adj = int((p_old * 256) / measure_size)-1
+            p_adj = int(p_old / measure_gcd)-1
             generated_measure[p_adj] = notes[note]
 
         return generated_measure
 
-    def fit_notes_to_measure(self, notes, timings, seconds_1_256) -> list[str]:
+    def fit_notes_to_measure(notes, timings, seconds_1_256) -> list[str]:
         # if no data is passed, generate current measure
         # as "empty" with the smallest size
         if not notes or not timings:

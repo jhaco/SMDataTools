@@ -1,5 +1,5 @@
 from os import walk
-from os.path import join, split, basename
+from os.path import join, split, splitext
 from re import sub
 
 def read_file(filename):
@@ -20,12 +20,13 @@ def strip_filename(filename):
     Replaces whitespace with '_'
     '''
     head, tail = split(filename) # handles possible filepaths that end with a slash
-    return sub(' ', '_', sub('[^a-z0-9-_ ]', '', basename(head).lower()))
+    tail = splitext(tail)[0]
+    return sub(' ', '_', sub('[^a-z0-9-_ ]', '', tail.lower()))
 
 def collect_filenames(input_dir, extension):
     filenames = []
     for root, dirs, files in walk(input_dir):
         for filename in files:
             if filename.endswith(extension):
-                filenames.append(join(root, filename))
+                filenames.append(join(root, filename).replace("\\","/"))
     return filenames
