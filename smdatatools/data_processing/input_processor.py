@@ -100,31 +100,3 @@ class InputProcessor:
         note_data['notes'][current_difficulty].extend(notes)
     
         return note_data
-
-
-
-
-
-#def main_collect(input_dir, output_dir):
-#    successful_files = 0
-#    for root, dirs, files in walk(input_dir):
-#        sm_files = [file for file in files if file.endswith('.sm')]
-#        ogg_files = [file for file in files if file.endswith('.ogg')]
-
-#        format_ogg_dict = dict(zip([format_file_name(ogg) for ogg in ogg_files], range(len(ogg_files))))
-
-#        for sm_file in sm_files:
-#            new_file = format_file_name(sm_file)
-#            if new_file in format_ogg_dict:
-#                try:
-#                    #sm_data = parse_sm(read_file(join(root, sm_file)))
-#                    # write sm text data to output dir
-#                    #write_file(pregenerate_txt(sm_data), join(output_dir, new_file + '.txt'))
-#                    # move and rename .ogg file to output dir
-#                    copyfile(join(root, ogg_files[format_ogg_dict[new_file]]), join(output_dir, new_file + '.ogg'))
-#                    successful_files+=1
-#                except Exception as ex:
-#                    logging.warning('Write failed for %s: %r' % (sm_file, ex))
-#            else:
-#                logging.warning('Skipped parsing for %s. Sound file not found' % (new_file))
-#    return successful_files
