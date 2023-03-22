@@ -48,36 +48,36 @@ if __name__ == '__main__':
     
     start_time = time.time()
 
-    options = Options()
+    dataList = [] # to contain a list of DataHandler object classes
     
     if hasattr(args, 'parsetxt'):
         print("Parsing .txt files from %s" % dir_txt_input)
         txt_filepaths = getFilePaths(dir_txt_input, '.txt')
         for file in txt_filepaths:
             print("  - Parsing %s" % file)
-            options.data.append(options.read_TXTtoData(file))
+            dataList.append(Options.read_TXTtoData(file))
 
     if hasattr(args, 'parsesm'):
         print("Parsing .sm files from %s" % dir_sm_input)
         sm_filepaths = getFilePaths(dir_sm_input, '.sm')
         for file in sm_filepaths:
             print("  - Parsing %s" % file)
-            options.data.append(options.read_SMtoData(file))
+            dataList.append(Options.read_SMtoData(file))
 
     if hasattr(args, 'writetxt'):
         print("Writing data to .txt files in %s" % dir_txt_output)
-        for data in options.data:
+        for data in dataList:
             output_path = join(dir_txt_output, data.filename + '.txt').replace("\\","/")
             print("  - Writing to %s" % output_path)
-            options.write_DatatoTXT(data, output_path)
+            Options.write_DatatoTXT(data, output_path)
             
     if hasattr(args, 'writesm'):
         print("Writing data to .sm files in %s" % dir_sm_output)
-        for data in options.data:
+        for data in dataList:
             data.process_data_to_sm_format()
             output_path = join(dir_sm_output, data.filename + '.sm').replace("\\","/")
             print("  - Writing to %s" % output_path)
-            options.write_DatatoSM(data, output_path)
+            Options.write_DatatoSM(data, output_path)
     
     end_time = time.time()
     print("Elapsed time was %g seconds" % (end_time - start_time))
