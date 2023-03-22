@@ -96,7 +96,6 @@ class InputProcessor:
                     current_difficulty = line.split()[1]
                 else:
                     notes_and_timings.append(line)
-        notes = Measure.place_notes(notes_and_timings, note_data['bpm'])
-        note_data['notes'][current_difficulty].extend(notes)
+        note_data['notes'][current_difficulty].extend(notes_and_timings)
     
         return note_data
