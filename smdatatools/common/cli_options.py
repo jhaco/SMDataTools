@@ -8,32 +8,6 @@ class Options:
     def __init__(self):
         self.data = [] # to contain a list of DataHandler object classes
 
-        self.sm_filepaths = []
-        self.ogg_filepaths = []
-        self.txt_filepaths = []
-
-    def getFilePaths(self, input_dir, extension):
-        filepaths = collect_filenames(input_dir, extension)
-
-        if(extension == '.sm'):
-            self.sm_filepaths = filepaths
-            self.checkFilePaths()
-        elif(extension == '.ogg'):
-            self.ogg_filepaths = filepaths
-        elif(extension == '.txt'):
-            self.txt_filepaths = filepaths
-
-    def checkFilePaths(self):
-        # checks for static bpm in the .sm file
-        # and removes filepath from list if not
-        for sm_file in self.sm_filepaths:
-            with open(sm_file, encoding='ascii', errors='ignore') as f:
-                for line in sm_file:
-                    if line.startswith('#BPMS:'):
-                        if ',' in line: # indicates multiple BPMs (non-static)
-                            self.sm_filepaths.remove(sm_file)
-                        break
-
     def read_SMtoData(self, filepath: str) -> DataHandler:
         data = DataHandler(filepath)
         istr = read_file(filepath)
@@ -52,6 +26,5 @@ class Options:
         write_file(ostr, filepath)
 
     def write_DatatoTXT(self, data: DataHandler, filepath: str):
-        filename = strip_filename(filepath)
         ostr = OutputProcessor.pregenerate_txt_output(data.note_data)
         write_file(ostr, filepath)

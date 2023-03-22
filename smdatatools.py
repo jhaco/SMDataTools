@@ -5,6 +5,7 @@ import time
 from os.path import isdir, join
 
 from smdatatools.common.cli_options import Options
+from smdatatools.common.file_utils import getFilePaths
 
 if __name__ == '__main__':
 
@@ -51,15 +52,15 @@ if __name__ == '__main__':
     
     if hasattr(args, 'parsetxt'):
         print("Parsing .txt files from %s" % dir_txt_input)
-        options.getFilePaths(dir_txt_input, '.txt')
-        for file in options.txt_filepaths:
+        txt_filepaths = getFilePaths(dir_txt_input, '.txt')
+        for file in txt_filepaths:
             print("  - Parsing %s" % file)
             options.data.append(options.read_TXTtoData(file))
 
     if hasattr(args, 'parsesm'):
         print("Parsing .sm files from %s" % dir_sm_input)
-        options.getFilePaths(dir_sm_input, '.sm')
-        for file in options.sm_filepaths:
+        sm_filepaths = getFilePaths(dir_sm_input, '.sm')
+        for file in sm_filepaths:
             print("  - Parsing %s" % file)
             options.data.append(options.read_SMtoData(file))
 

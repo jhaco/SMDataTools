@@ -30,3 +30,22 @@ def collect_filenames(input_dir, extension):
             if filename.endswith(extension):
                 filenames.append(join(root, filename).replace("\\","/"))
     return filenames
+
+def getFilePaths(input_dir, extension):
+    filepaths = collect_filenames(input_dir, extension)
+
+    if(extension == '.sm'):
+        checkFilePaths(filepaths)
+
+    return filepaths
+
+def checkFilePaths(sm_filepaths):
+    # checks for static bpm in the .sm file
+    # and removes filepath from list if not
+    for sm_file in sm_filepaths:
+        with open(sm_file, encoding='ascii', errors='ignore') as f:
+            for line in sm_file:
+                if line.startswith('#BPMS:'):
+                    if ',' in line: # indicates multiple BPMs (non-static)
+                        sm_filepaths.remove(sm_file)
+                    break
