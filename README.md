@@ -1,28 +1,41 @@
-## SMDataTools
-###### Stepmania Data Tools compiles the [Stepmania File Parser](https://github.com/jhaco/SMFile_Parser) and [Stepmania File Writer](https://github.com/jhaco/SMFile_Writer) scripts into one. Refer to either scripts' README for more information.
+Stepmania Data Tools is a Python library that rewrites functionality from [Stepmania File Parser](https://github.com/jhaco/SMFile_Parser) and [Stepmania File Writer](https://github.com/jhaco/SMFile_Writer) projects into one tool for extracting and converting note and timing data.
 
-`python smdatatools.py [--parsetxt "txt_dir (opt)"] [--parsesm "sm_dir (opt)"] [--writetxt "txt_dir (opt)"] [--writesm "sm_dir (opt)"]`
+## Usage
 
-#### Notes: 
+### Command Line Tool
 
-- Added DataHandler class to store note data. Each handler will represent data from one .sm or .txt file.
-- Multiple CLI options can be used at once, allowing the tool to run them all. Each option will always run in a specific order.
-- Input and output directories should be specified in config.ini file for each script.
-- Config settings can be overridden by providing a directory with any CLI option.
-- If a CLI option is used without providing a directory, the tool will use the value specified in config.ini.
+This library offers a command-line tool interface. All flags are optional, but at least one is needed to run the tool.
 
----
+```bash
+python smdatatools.py --parsetxt --parsesm --writetxt --writesm
+```
 
-<details close>
-  <summary>Changelog</summary>
-        
-  Sorted by most recent:
-  
-  - added ability to override config options through the command line
-  - refactored code to decouple large code blocks into smaller distinct components, improving modularity
-  - logged console output to file, reducing avg runtime by 15%: from 20s to 17s for ~200 files
-  - added error message for unpaired .sm/sound files; added count for successfully processed files
-  - fixed error message; ensured note data matches the 4-note dance-singles mode, not 8-note dance-doubles
-  - added configuration file to reduce tedium in specifying input/output folders
-  
-</details>
+By default, the tool will use directories specified within `config.ini`. Users will have the option to override these by appending a directory to its corresponding flag in the command-line:
+
+##### Example 1:
+
+```bash
+python smdatatools.py --parsetxt <input-txt-dir>
+```
+
+##### Example 2: overriding multiple flags
+
+```bash
+python smdatatools.py --parsesm <input-sm-dir> --writetxt <output-txt-dir>
+```
+
+##### Example 3: overriding all but one flag
+
+```bash
+python smdatatools.py --parsesm <input-sm-dir> --writetxt <output-txt-dir> --writesm
+```
+
+### Options Overview
+
+#### Parsing SM Files for Data using `--parsesm`
+
+#### Writing Data to SM Files using `--writesm`
+
+#### Parsing TXT Files for Data using `--parsetxt`
+
+#### Writing Data to TXT Files using `--writetxt`
