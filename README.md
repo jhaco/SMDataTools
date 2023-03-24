@@ -32,7 +32,7 @@ python smdatatools.py --parsesm <input-sm-dir> --writetxt <output-txt-dir>
 python smdatatools.py --parsesm <input-sm-dir> --writetxt <output-txt-dir> --writesm
 ```
 
-(Optional) If users want to copy all .ogg audio files related to the parsed data into one place, append `-c` `--copyaudio`
+(Optional) If users want to copy all audio files related to the parsed data into one place, append `-c` `--copyaudio`
 
 ### Options Overview
 

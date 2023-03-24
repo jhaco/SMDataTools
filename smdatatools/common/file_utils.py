@@ -23,18 +23,19 @@ def strip_filename(filename):
     tail = splitext(tail)[0]
     return sub(' ', '_', sub('[^a-z0-9-_ ]', '', tail.lower()))
 
-def collect_filenames(input_dir, extension):
+def collect_filenames(input_dir: str, extensions: list):
     filenames = []
     for root, dirs, files in walk(input_dir):
         for filename in files:
-            if filename.endswith(extension):
+            fname, fext = splitext(filename)
+            if fext in extensions:
                 filenames.append(join(root, filename).replace("\\","/"))
     return filenames
 
-def getFilePaths(input_dir, extension):
-    filepaths = collect_filenames(input_dir, extension)
+def getFilePaths(input_dir: list, extensions: list):
+    filepaths = collect_filenames(input_dir, extensions)
 
-    if(extension == '.sm'):
+    if '.sm' in extensions:
         checkFilePaths(filepaths)
 
     return filepaths

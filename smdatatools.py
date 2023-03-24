@@ -3,7 +3,7 @@ import configparser
 import sys
 import time
 from shutil import copyfile
-from os.path import isdir, isfile, join
+from os.path import isdir, isfile, join, splitext
 
 from smdatatools.common.cli_options import Options
 from smdatatools.common.file_utils import getFilePaths, strip_filename
@@ -62,14 +62,14 @@ if __name__ == '__main__':
     
     if hasattr(args, 'parsetxt'):
         print("Parsing .txt files from %s" % dir_txt_input)
-        txt_filepaths = getFilePaths(dir_txt_input, '.txt')
+        txt_filepaths = getFilePaths(dir_txt_input, {'.txt'})
         for file in txt_filepaths:
             print("  - Parsing %s" % file)
             dataList.append(Options.read_TXTtoData(file))
 
     if hasattr(args, 'parsesm'):
         print("Parsing .sm files from %s" % dir_sm_input)
-        sm_filepaths = getFilePaths(dir_sm_input, '.sm')
+        sm_filepaths = getFilePaths(dir_sm_input, {'.sm'})
         for file in sm_filepaths:
             print("  - Parsing %s" % file)
             dataList.append(Options.read_SMtoData(file))
@@ -95,20 +95,21 @@ if __name__ == '__main__':
     if hasattr(args, 'copyaudio'):
         print("Copying audio files (if it exists) related to parsed data")
 
-        ogg_filepaths = []
-        ogg_filepaths.extend(getFilePaths(dir_sm_input, '.ogg'))
-        ogg_filepaths.extend(getFilePaths(dir_txt_input, '.ogg'))
+        extensions = {'.ogg', '.mp3', '.wav'}
+        audio_filepaths = []
+        audio_filepaths.extend(getFilePaths(dir_sm_input, extensions))
+        audio_filepaths.extend(getFilePaths(dir_txt_input, extensions))
 
-        # create a dictionary pairing the formatted ogg filename with their original path
-        ogg_name_paths = dict(zip([strip_filename(ogg) for ogg in ogg_filepaths], range(len(ogg_filepaths))))
+        # create a dictionary pairing the formatted audio filename with their original path
+        audio_name_paths = dict(zip([strip_filename(audio) for audio in audio_filepaths], range(len(audio_filepaths))))
 
         # copy audio file if it matches any parsed data
         for data in dataList:
-            if data.filename in ogg_name_paths.keys():
+            if data.filename in audio_name_paths.keys():
 
-                in_ogg_path = ogg_filepaths[ogg_name_paths[data.filename]]
-                out_ogg_path = join(dir_output_audio, data.filename + '.ogg').replace("\\","/")
+                in_audio_path = audio_filepaths[audio_name_paths[data.filename]]
+                out_audio_path = join(dir_output_audio, data.filename + splitext(in_audio_path)[1]).replace("\\","/")
 
-                if isfile(in_ogg_path) and not isfile(out_ogg_path):
-                    print('  - Copying audio from %s to %s' % (in_ogg_path, out_ogg_path))
-                    copyfile(in_ogg_path, out_ogg_path)
+                if isfile(in_audio_path) and not isfile(out_audio_path):
+                    print('  - Copying audio from %s to %s' % (in_audio_path, out_audio_path))
+                    copyfile(in_audio_path, out_audio_path)
