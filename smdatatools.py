@@ -2,10 +2,11 @@ import argparse
 import configparser
 import sys
 import time
-from os.path import isdir, join
+from shutil import copyfile
+from os.path import isdir, isfile, join
 
 from smdatatools.common.cli_options import Options
-from smdatatools.common.file_utils import getFilePaths
+from smdatatools.common.file_utils import getFilePaths, strip_filename
 
 if __name__ == '__main__':
 
@@ -14,6 +15,7 @@ if __name__ == '__main__':
     parser.add_argument('-ps', '--parsesm',  type=str, nargs='?', default=argparse.SUPPRESS, help='Parse data from .sm files  (add a directory to this arg to override the config)')
     parser.add_argument('-wt', '--writetxt', type=str, nargs='?', default=argparse.SUPPRESS, help='Write data to .txt files   (add a directory to this arg to override the config)')
     parser.add_argument('-ws', '--writesm',  type=str, nargs='?', default=argparse.SUPPRESS, help='Write data to .sm files    (add a directory to this arg to override the config)')
+    parser.add_argument('-c', '--copyaudio', type=str, nargs='?', default=argparse.SUPPRESS, help='Copy audio files           (add a directory to this arg to override the config)')
     args = parser.parse_args()
     
     config = configparser.ConfigParser()
@@ -39,13 +41,21 @@ if __name__ == '__main__':
         if args.writesm:
            dir_sm_output = args.writesm
 
+    dir_output_audio = config.get('dir', 'copyaudio')
+    if(hasattr(args, 'copyaudio')):
+        if args.copyaudio:
+            dir_output_audio = args.copyaudio
+
     if not isdir(dir_txt_input) or not isdir(dir_sm_input):
         print('Input .txt or .sm directory not found. Check user entry or configuration, and that the directories exist.')
         sys.exit()
     if not isdir(dir_txt_output) or not isdir(dir_sm_output):
         print('Output .txt or .sm directory not found. Check user entry or configuration, and that the directories exist.')
         sys.exit()
-    
+    if not isdir(dir_output_audio):
+        print('Output directory for audio files not found. Check user entry or configuration, and that the directory exist.')
+        sys.exit()
+
     start_time = time.time()
 
     dataList = [] # to contain a list of DataHandler object classes
@@ -80,4 +90,25 @@ if __name__ == '__main__':
             Options.write_DatatoSM(data, output_path)
     
     end_time = time.time()
-    print("Elapsed time was %g seconds" % (end_time - start_time))
+    print("Elapsed data processing time was %g seconds" % (end_time - start_time))
+
+    if hasattr(args, 'copyaudio'):
+        print("Copying audio files (if it exists) related to parsed data")
+
+        ogg_filepaths = []
+        ogg_filepaths.extend(getFilePaths(dir_sm_input, '.ogg'))
+        ogg_filepaths.extend(getFilePaths(dir_txt_input, '.ogg'))
+
+        # create a dictionary pairing the formatted ogg filename with their original path
+        ogg_name_paths = dict(zip([strip_filename(ogg) for ogg in ogg_filepaths], range(len(ogg_filepaths))))
+
+        # copy audio file if it matches any parsed data
+        for data in dataList:
+            if data.filename in ogg_name_paths.keys():
+
+                in_ogg_path = ogg_filepaths[ogg_name_paths[data.filename]]
+                out_ogg_path = join(dir_output_audio, data.filename + '.ogg').replace("\\","/")
+
+                if isfile(in_ogg_path) and not isfile(out_ogg_path):
+                    print('  - Copying audio from %s to %s' % (in_ogg_path, out_ogg_path))
+                    copyfile(in_ogg_path, out_ogg_path)
