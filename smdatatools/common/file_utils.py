@@ -1,20 +1,52 @@
-from os.path import splitext
+from os import walk
+from os.path import join, split, splitext
 from re import sub
 
-def read_file(input_file):
+def read_file(filename):
     file_data = []
-    with open(input_file, encoding='ascii', errors='ignore') as f:
+    with open(filename, encoding='ascii', errors='ignore') as f:
         file_data = f.read().splitlines()
     return file_data
 
-def write_file(formatted_data, output_file):
-    with open(output_file, 'w') as f:
-        f.write(formatted_data)
+def write_file(output_data, filename):
+    with open(filename, 'w') as f:
+        f.write(output_data)
 
-def format_file_name(file_name):
+def strip_filename(filename):
     '''
+    Strips file path
     Strips file extension
     Reformats to lowercase alphanumerics only, except '-' and '_'
     Replaces whitespace with '_'
     '''
-    return sub(' ', '_', sub('[^a-z0-9-_ ]', '', splitext(file_name)[0].lower()))
+    head, tail = split(filename) # handles possible filepaths that end with a slash
+    tail = splitext(tail)[0]
+    return sub(' ', '_', sub('[^a-z0-9-_ ]', '', tail.lower()))
+
+def collect_filenames(input_dir: str, extensions: list):
+    filenames = []
+    for root, dirs, files in walk(input_dir):
+        for filename in files:
+            fname, fext = splitext(filename)
+            if fext in extensions:
+                filenames.append(join(root, filename).replace("\\","/"))
+    return filenames
+
+def getFilePaths(input_dir: list, extensions: list):
+    filepaths = collect_filenames(input_dir, extensions)
+
+    if '.sm' in extensions:
+        checkFilePaths(filepaths)
+
+    return filepaths
+
+def checkFilePaths(sm_filepaths):
+    # checks for static bpm in the .sm file
+    # and removes filepath from list if not
+    for sm_file in sm_filepaths:
+        with open(sm_file, encoding='ascii', errors='ignore') as f:
+            for line in sm_file:
+                if line.startswith('#BPMS:'):
+                    if ',' in line: # indicates multiple BPMs (non-static)
+                        sm_filepaths.remove(sm_file)
+                    break
