@@ -1,4 +1,4 @@
-Stepmania Data Tools is a Python library that rewrites functionality from [Stepmania File Parser](https://github.com/jhaco/SMFile_Parser) and [Stepmania File Writer](https://github.com/jhaco/SMFile_Writer) projects into one tool for extracting and converting note and timing data.
+Stepmania Data Tools is a Python library that rewrites functionality from [Stepmania File Parser](https://github.com/jhaco/SMFile_Parser) and [Stepmania File Writer](https://github.com/jhaco/SMFile_Writer) projects into one tool for extracting and converting note and timing data. Used with cpuguy96's [StepCOVNet](https://github.com/cpuguy96/StepCOVNet).
 
 ## Usage
 
@@ -32,7 +32,15 @@ python smdatatools.py --parsesm <input-sm-dir> --writetxt <output-txt-dir>
 python smdatatools.py --parsesm <input-sm-dir> --writetxt <output-txt-dir> --writesm
 ```
 
-(Optional) If users want to copy all audio files related to the parsed data into one place, append `-c` `--copyaudio`
+`-ps` `--parsesm` Parses .sm files for note data
+
+`-ws` `--writesm` Writes converted data to playable .sm files
+
+`-pt` `--parsetxt` Parses .txt files for note data
+
+`-wt` `--writetxt` Writes raw data to .txt files
+
+`-c` `--copyaudio` Copies audio files for successfully parsed data to a directory
 
 ### Options Overview
 
