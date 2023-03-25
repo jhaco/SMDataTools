@@ -1,4 +1,4 @@
-from smdatatools.common.file_utils import read_file, write_file, strip_filename, collect_filenames
+from smdatatools.common.file_utils import read_file, write_file, strip_filename
 from smdatatools.data_processing.data_handler import DataHandler
 from smdatatools.data_processing.input_processor import InputProcessor
 from smdatatools.data_processing.output_processor import OutputProcessor

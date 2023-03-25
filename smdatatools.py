@@ -11,11 +11,11 @@ from smdatatools.common.file_utils import getFilePaths, strip_filename
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Stepmania Data Tools')
-    parser.add_argument('-pt', '--parsetxt', type=str, nargs='?', default=argparse.SUPPRESS, help='Parse data from .txt files (add a directory to this arg to override the config)')
-    parser.add_argument('-ps', '--parsesm',  type=str, nargs='?', default=argparse.SUPPRESS, help='Parse data from .sm files  (add a directory to this arg to override the config)')
-    parser.add_argument('-wt', '--writetxt', type=str, nargs='?', default=argparse.SUPPRESS, help='Write data to .txt files   (add a directory to this arg to override the config)')
-    parser.add_argument('-ws', '--writesm',  type=str, nargs='?', default=argparse.SUPPRESS, help='Write data to .sm files    (add a directory to this arg to override the config)')
-    parser.add_argument('-c', '--copyaudio', type=str, nargs='?', default=argparse.SUPPRESS, help='Copy audio files           (add a directory to this arg to override the config)')
+    parser.add_argument('-pt', '--parsetxt', type=str, nargs='?', default=argparse.SUPPRESS, help='Parse data from .txt files  (no args to use config defines, or add a path to override)')
+    parser.add_argument('-ps', '--parsesm',  type=str, nargs='?', default=argparse.SUPPRESS, help='Parse data from .sm files   (no args to use config defines, or add a path to override)')
+    parser.add_argument('-wt', '--writetxt', type=str, nargs='?', default=argparse.SUPPRESS, help='Write data to .txt files    (no args to use config defines, or add a path to override)')
+    parser.add_argument('-ws', '--writesm',  type=str, nargs='?', default=argparse.SUPPRESS, help='Write data to .sm files     (no args to use config defines, or add a path to override)')
+    parser.add_argument('-c', '--copyaudio', type=str, nargs='?', default=argparse.SUPPRESS, help='Copy audio files            (no args to use config defines, or add a path to override)')
     args = parser.parse_args()
     
     config = configparser.ConfigParser()
@@ -26,64 +26,76 @@ if __name__ == '__main__':
         if args.parsetxt:
             dir_txt_input = args.parsetxt
 
+        if not isdir(dir_txt_input):
+            print('Input .txt directory not found. Check user entry or configuration, and that the directory exist.')
+            sys.exit()
+
     dir_sm_input = config.get('dir', 'parsesm')  
     if(hasattr(args, 'parsesm')):    
         if args.parsesm:
            dir_sm_input = args.parsesm
+
+        if not isdir(dir_sm_input):
+            print('Input .sm directory not found. Check user entry or configuration, and that the directory exist.')
+            sys.exit()
 
     dir_txt_output = config.get('dir', 'writetxt') 
     if(hasattr(args, 'writetxt')):    
         if args.writetxt:
            dir_txt_output = args.writetxt
 
+        if not isdir(dir_txt_output):
+            print('Output .txt directory not found. Check user entry or configuration, and that the directory exist.')
+            sys.exit()
+
     dir_sm_output = config.get('dir', 'writesm') 
     if(hasattr(args, 'writesm')):    
         if args.writesm:
            dir_sm_output = args.writesm
+
+        if not isdir(dir_sm_output):
+            print('Output .sm directory not found. Check user entry or configuration, and that the directory exist.')
+            sys.exit()
 
     dir_output_audio = config.get('dir', 'copyaudio')
     if(hasattr(args, 'copyaudio')):
         if args.copyaudio:
             dir_output_audio = args.copyaudio
 
-    if not isdir(dir_txt_input) or not isdir(dir_sm_input):
-        print('Input .txt or .sm directory not found. Check user entry or configuration, and that the directories exist.')
-        sys.exit()
-    if not isdir(dir_txt_output) or not isdir(dir_sm_output):
-        print('Output .txt or .sm directory not found. Check user entry or configuration, and that the directories exist.')
-        sys.exit()
-    if not isdir(dir_output_audio):
-        print('Output directory for audio files not found. Check user entry or configuration, and that the directory exist.')
-        sys.exit()
+        if not isdir(dir_output_audio):
+            print('Output directory for audio files not found. Check user entry or configuration, and that the directory exist.')
+            sys.exit()
 
     start_time = time.time()
 
-    dataList = [] # to contain a list of DataHandler object classes
+    # a dict of filename:DataHandler object class pairs
+    # to resolve possible duplicates (parsesm will overwrite dupes from parsetxt)
+    dataList = {} 
     
     if hasattr(args, 'parsetxt'):
         print("Parsing .txt files from %s" % dir_txt_input)
         txt_filepaths = getFilePaths(dir_txt_input, {'.txt'})
         for file in txt_filepaths:
             print("  - Parsing %s" % file)
-            dataList.append(Options.read_TXTtoData(file))
+            dataList[strip_filename(file)] = Options.read_TXTtoData(file)
 
     if hasattr(args, 'parsesm'):
         print("Parsing .sm files from %s" % dir_sm_input)
         sm_filepaths = getFilePaths(dir_sm_input, {'.sm'})
         for file in sm_filepaths:
             print("  - Parsing %s" % file)
-            dataList.append(Options.read_SMtoData(file))
+            dataList[strip_filename(file)] = Options.read_SMtoData(file)
 
     if hasattr(args, 'writetxt'):
         print("Writing data to .txt files in %s" % dir_txt_output)
-        for data in dataList:
+        for data in dataList.values():
             output_path = join(dir_txt_output, data.filename + '.txt').replace("\\","/")
             print("  - Writing to %s" % output_path)
             Options.write_DatatoTXT(data, output_path)
             
     if hasattr(args, 'writesm'):
         print("Writing data to .sm files in %s" % dir_sm_output)
-        for data in dataList:
+        for data in dataList.values():
             data.process_data_to_sm_format()
             output_path = join(dir_sm_output, data.filename + '.sm').replace("\\","/")
             print("  - Writing to %s" % output_path)
