@@ -5,17 +5,24 @@ import time
 from shutil import copyfile
 from os.path import isdir, isfile, join, splitext
 
+import librosa
+import soundfile as sf
+
 from smdatatools.common.cli_options import Options
 from smdatatools.common.file_utils import getFilePaths, strip_filename
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Stepmania Data Tools')
-    parser.add_argument('-pt', '--parsetxt', type=str, nargs='?', default=argparse.SUPPRESS, help='Parse data from .txt files  (no args to use config defines, or add a path to override)')
-    parser.add_argument('-ps', '--parsesm',  type=str, nargs='?', default=argparse.SUPPRESS, help='Parse data from .sm files   (no args to use config defines, or add a path to override)')
-    parser.add_argument('-wt', '--writetxt', type=str, nargs='?', default=argparse.SUPPRESS, help='Write data to .txt files    (no args to use config defines, or add a path to override)')
-    parser.add_argument('-ws', '--writesm',  type=str, nargs='?', default=argparse.SUPPRESS, help='Write data to .sm files     (no args to use config defines, or add a path to override)')
-    parser.add_argument('-c', '--copyaudio', type=str, nargs='?', default=argparse.SUPPRESS, help='Copy audio files            (no args to use config defines, or add a path to override)')
+    parser.add_argument('-pt', '--parsetxt', type=str, nargs='?', default=argparse.SUPPRESS, help='Parse data from .txt files (no args to use config defines, or add an input path to override)')
+    parser.add_argument('-ps', '--parsesm',  type=str, nargs='?', default=argparse.SUPPRESS, help='Parse data from .sm files  (no args to use config defines, or add an input path to override)')
+    
+    parser.add_argument('-wt', '--writetxt', type=str, nargs='?', default=argparse.SUPPRESS, help='Write data to .txt files   (no args to use config defines, or add an output path to override)')
+    parser.add_argument('-ws', '--writesm',  type=str, nargs='?', default=argparse.SUPPRESS, help='Write data to .sm files    (no args to use config defines, or add an output path to override)')
+    
+    parser.add_argument('-ca', '--copyaudio', type=str, nargs='?', default=argparse.SUPPRESS, help='Copy audio matching data  (no args to use config defines, or add an output path to override)')
+    parser.add_argument('-ia', '--inputaudio', type=str, help='Use this input dir instead for --copyaudio (useful when only converting audio with --resample')
+    parser.add_argument('-ra', '--resample', default=False, action='store_true', help='Resamples audio to .wav when used with --copyaudio')
     args = parser.parse_args()
     
     config = configparser.ConfigParser()
@@ -104,24 +111,52 @@ if __name__ == '__main__':
     end_time = time.time()
     print("Elapsed data processing time was %g seconds" % (end_time - start_time))
 
+
+
     if hasattr(args, 'copyaudio'):
         print("Copying audio files (if it exists) related to parsed data")
 
         extensions = {'.ogg', '.mp3', '.wav'}
-        audio_filepaths = []
-        audio_filepaths.extend(getFilePaths(dir_sm_input, extensions))
-        audio_filepaths.extend(getFilePaths(dir_txt_input, extensions))
 
-        # create a dictionary pairing the formatted audio filename with their original path
-        audio_name_paths = dict(zip([strip_filename(audio) for audio in audio_filepaths], range(len(audio_filepaths))))
+        if args.inputaudio: # forces conversion without needing corresponding sm/txt data
+            audio_filepaths = getFilePaths(args.inputaudio, extensions)
 
-        # copy audio file if it matches any parsed data
-        for data in dataList:
-            if data.filename in audio_name_paths.keys():
+            for in_audio_path in audio_filepaths:
+                if args.resample:
+                    out_audio_path = join(dir_output_audio, strip_filename(in_audio_path) + '.wav').replace("\\","/")
+                    if isfile(in_audio_path) and not isfile(out_audio_path):
+                        print('  - Resampling %s to .wav' % in_audio_path)
+                        print('  - Writing .wav data to %s' % out_audio_path)
+                        wav_audio, sample_rate = librosa.load(in_audio_path, sr=16000)
+                        sf.write(out_audio_path, wav_audio, sample_rate)
+                else:
+                    out_audio_path = join(dir_output_audio, strip_filename(in_audio_path) + splitext(in_audio_path)[1]).replace("\\","/")
+                    if isfile(in_audio_path) and not isfile(out_audio_path):
+                        print('  - Copying audio from %s to %s' % (in_audio_path, out_audio_path))
+                        copyfile(in_audio_path, out_audio_path)
 
-                in_audio_path = audio_filepaths[audio_name_paths[data.filename]]
-                out_audio_path = join(dir_output_audio, data.filename + splitext(in_audio_path)[1]).replace("\\","/")
+        else:
+            audio_filepaths = getFilePaths(dir_sm_input, extensions)
+            audio_filepaths.extend(getFilePaths(dir_txt_input, extensions))
 
-                if isfile(in_audio_path) and not isfile(out_audio_path):
-                    print('  - Copying audio from %s to %s' % (in_audio_path, out_audio_path))
-                    copyfile(in_audio_path, out_audio_path)
+            # create a dictionary pairing the formatted audio filename with their original path
+            audio_name_paths = dict(zip([strip_filename(audio) for audio in audio_filepaths], range(len(audio_filepaths))))
+
+            # copy audio file if it matches any parsed data
+            for data in dataList:
+                if data.filename in audio_name_paths.keys():
+
+                    in_audio_path = audio_filepaths[audio_name_paths[data.filename]]
+
+                    if args.resample:
+                        out_audio_path = join(dir_output_audio, data.filename + '.wav').replace("\\","/")
+                        if isfile(in_audio_path) and not isfile(out_audio_path):
+                            print('  - Resampling %s to .wav' % in_audio_path)
+                            print('  - Writing .wav data to %s' % out_audio_path)
+                            wav_audio, sample_rate = librosa.load(in_audio_path, sr=16000)
+                            sf.write(out_audio_path, wav_audio, sample_rate)
+                    else:  
+                        out_audio_path = join(dir_output_audio, data.filename + splitext(in_audio_path)[1]).replace("\\","/")
+                        if isfile(in_audio_path) and not isfile(out_audio_path):
+                            print('  - Copying audio from %s to %s' % (in_audio_path, out_audio_path))
+                            copyfile(in_audio_path, out_audio_path)
