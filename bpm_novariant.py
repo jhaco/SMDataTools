@@ -1,4 +1,4 @@
-from os import walk, remove
+from os import walk
 from os.path import join, splitext, dirname, realpath
 import shutil
 
@@ -19,7 +19,12 @@ def get_folders_to_delete():
 								parent_dir = dirname(sm_file).replace("\\","/")
 								to_delete.append(parent_dir)
 								break
-							else:
+							elif ';' not in line: # indicates there might be more BPMs or weird formatting
+								if ',' in next(f): # check next line
+									# add its parent folder
+									parent_dir = dirname(sm_file).replace("\\","/")
+									to_delete.append(parent_dir)
+									break
 								break
 	return to_delete
 

@@ -49,4 +49,7 @@ def checkFilePaths(sm_filepaths):
                 if line.startswith('#BPMS:'):
                     if ',' in line: # indicates multiple BPMs (non-static)
                         sm_filepaths.remove(sm_file)
+                    elif ';' not in line: # indicates there might be more BPMs or weird formatting
+                        if ',' in next(f): # check next line
+                            sm_filepaths.remove(sm_file)
                     break
