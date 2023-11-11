@@ -8,7 +8,7 @@ class Options:
     def read_SMtoData(filepath: str) -> DataHandler:
         data = DataHandler(filepath)
         istr = read_file(filepath)
-        data.note_data = InputProcessor.parse_sm_input(istr)
+        data.note_data, data.valid = InputProcessor.parse_sm_input(istr)
         return data
 
     def read_TXTtoData(filepath: str) -> DataHandler:

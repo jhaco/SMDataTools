@@ -12,6 +12,7 @@ class DataHandler:
 
         self.note_data = defaultdict(list)
         self.processed_data = defaultdict(list)
+        self.valid = True
 
     def process_data_to_sm_format(self):
 

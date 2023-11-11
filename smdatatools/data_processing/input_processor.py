@@ -15,6 +15,8 @@ class InputProcessor:
         measure         = []
         measure_index   = 0
 
+        valid = True
+
         read_notes          = False
         not_dance_single    = False # ensures data matches the 4-note dance-singles mode, not the 8-note dance-double
 
@@ -33,11 +35,17 @@ class InputProcessor:
                         if data_name == 'TITLE':
                             note_data['title']  = data_value
                         elif data_name == 'BPMS':
-                            if ',' in data_value:  # raises Exception if multiple BPMS detected
-                                raise ValueError('Multiple BPMs detected')
+                            if ',' in data_value:  # skips if multiple BPMS detected
+                                # instead of raising an error, print a warning with the song name and skip
+                                print('Multiple BPMs detected. Skipping...)
+                                valid = False
+                                break
                             note_data['bpm']    = float(split('=', data_value)[-1]) # removes time to get bpm
-                        elif data_name == 'STOPS' and data_value:
-                            raise ValueError('Stop detected')
+                        elif data_name == 'STOPS' and data_value: # skips if STOPS are detected
+                            # instead of raising an error, print a warning with the song name and skip
+                            print('Stop detected. Skipping...)
+                            valid = False
+                            break
                         elif data_name == 'OFFSET':
                             note_data['offset'] = float(data_value)
                         read_values = ''
@@ -65,7 +73,7 @@ class InputProcessor:
                         else:
                             measure.append(None)
                 
-        return note_data
+        return note_data, valid
 
     def parse_txt_input(txt_file):
         note_data = defaultdict(list)

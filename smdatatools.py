@@ -84,7 +84,9 @@ if __name__ == '__main__':
         sm_filepaths = getFilePaths(dir_sm_input, {'.sm'})
         for file in sm_filepaths:
             print("  - Parsing %s" % file)
-            dataList[strip_filename(file)] = Options.read_SMtoData(file)
+            data = Options.read_SMtoData(file)
+            if data.valid :
+                dataList[strip_filename(file)] = data
 
     if hasattr(args, 'writetxt'):
         print("Writing data to .txt files in %s" % dir_txt_output)
