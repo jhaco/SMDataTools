@@ -37,13 +37,13 @@ class InputProcessor:
                         elif data_name == 'BPMS':
                             if ',' in data_value:  # skips if multiple BPMS detected
                                 # instead of raising an error, print a warning with the song name and skip
-                                print('Multiple BPMs detected. Skipping...)
+                                print('Multiple BPMs detected. Skipping...')
                                 valid = False
                                 break
                             note_data['bpm']    = float(split('=', data_value)[-1]) # removes time to get bpm
                         elif data_name == 'STOPS' and data_value: # skips if STOPS are detected
                             # instead of raising an error, print a warning with the song name and skip
-                            print('Stop detected. Skipping...)
+                            print('Stop detected. Skipping...')
                             valid = False
                             break
                         elif data_name == 'OFFSET':
