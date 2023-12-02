@@ -5,10 +5,10 @@ from smdatatools.components.measure import Measure
 
 class InputProcessor:
 
-    def convert_note(line):                                                      
+    def convert_note(line: str) -> str:                                                      
         return sub('4', '1', sub('[MKLF]', '0', line))    #replaces extra notes: M, K, L, F; replaces 4 note
 
-    def parse_sm_input(sm_file):
+    def parse_sm_input(sm_file: list[str]) -> tuple[defaultdict(list), bool]:
         note_data = defaultdict(list)
         note_data['notes'] = defaultdict(list) # notes are paired with each difficulty
         current_difficulty = ''
@@ -75,7 +75,7 @@ class InputProcessor:
                 
         return note_data, valid
 
-    def parse_txt_input(txt_file):
+    def parse_txt_input(txt_file: list[str]) -> defaultdict(list):
         note_data = defaultdict(list)
         note_data['notes'] = defaultdict(list)
         current_difficulty = ''

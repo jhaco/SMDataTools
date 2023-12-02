@@ -3,7 +3,7 @@ from math import gcd, ceil
 
 class Measure:
 
-    def calculate_timing(measure, measure_index, bpm, offset):
+    def calculate_timing(measure: list[str], measure_index: int, bpm: float, offset: float) -> str:
         # calculate time in seconds for each line in the measure:
         #   BPM       = beats/minute -> BPS = beats/second = BPM/60
         #   measure   = 4 beats = 4 * 1/4th notes     = 1 note
@@ -30,7 +30,7 @@ class Measure:
     
         return int(gcd_gap)
 
-    def generate_measure(notes, note_positions) -> list[str]:
+    def generate_measure(notes: list[str], note_positions: list[int]) -> list[str]:
     
         # we'll want to trim as much output as possible
         # by reducing the measure size
@@ -46,7 +46,7 @@ class Measure:
 
         return generated_measure
 
-    def fit_notes_to_measure(notes, timings, seconds_1_256) -> list[str]:
+    def fit_notes_to_measure(notes: list[str], timings: list[float], seconds_1_256: float) -> list[str]:
         # if no data is passed, generate current measure
         # as "empty" with the smallest size
         if not notes or not timings:
@@ -78,7 +78,7 @@ class Measure:
 
         return measure
 
-    def place_notes(notes_and_timings, bpm) -> list:
+    def place_notes(notes_and_timings: list[str], bpm: float) -> list[str]:
         placed_notes = []
         if not notes_and_timings:
             return placed_notes
