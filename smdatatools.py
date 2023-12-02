@@ -119,10 +119,10 @@ if __name__ == '__main__':
 
         # copy audio file if it matches any parsed data
         for data in dataList:
-            if data.filename in audio_name_paths.keys():
+            if data in audio_name_paths.keys():
 
-                in_audio_path = audio_filepaths[audio_name_paths[data.filename]]
-                out_audio_path = join(dir_output_audio, data.filename + splitext(in_audio_path)[1]).replace("\\","/")
+                in_audio_path = audio_filepaths[audio_name_paths[data]]
+                out_audio_path = join(dir_output_audio, data + splitext(in_audio_path)[1]).replace("\\","/")
 
                 if isfile(in_audio_path) and not isfile(out_audio_path):
                     print('  - Copying audio from %s to %s' % (in_audio_path, out_audio_path))
