@@ -8,7 +8,7 @@ class InputProcessor:
     def convert_note(line: str) -> str:                                                      
         return sub('4', '1', sub('[MKLF]', '0', line))    #replaces extra notes: M, K, L, F; replaces 4 note
 
-    def parse_sm_input(sm_file: list[str]) -> tuple[defaultdict(list), bool]:
+    def parse_sm_input(sm_file: list[str]) -> tuple[dict[str, dict[str or list[str]] or float or int ], bool]:
         note_data = defaultdict(list)
         note_data['notes'] = defaultdict(list) # notes are paired with each difficulty
         current_difficulty = ''
@@ -75,7 +75,7 @@ class InputProcessor:
                 
         return note_data, valid
 
-    def parse_txt_input(txt_file: list[str]) -> defaultdict(list):
+    def parse_txt_input(txt_file: list[str]) -> dict[str, dict[str or list[str]] or float or int ]:
         note_data = defaultdict(list)
         note_data['notes'] = defaultdict(list)
         current_difficulty = ''
