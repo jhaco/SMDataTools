@@ -2,17 +2,17 @@ from os import walk
 from os.path import join, split, splitext
 from re import sub
 
-def read_file(filename):
+def read_file(filename: str) -> list[str]:
     file_data = []
     with open(filename, encoding='ascii', errors='ignore') as f:
         file_data = f.read().splitlines()
     return file_data
 
-def write_file(output_data, filename):
+def write_file(output_data: str, filename: str) -> None:
     with open(filename, 'w') as f:
         f.write(output_data)
 
-def strip_filename(filename):
+def strip_filename(filename: str) -> str:
     '''
     Strips file path
     Strips file extension
@@ -23,7 +23,7 @@ def strip_filename(filename):
     tail = splitext(tail)[0]
     return sub(' ', '_', sub('[^a-z0-9-_ ]', '', tail.lower()))
 
-def collect_filenames(input_dir: str, extensions: list):
+def collect_filenames(input_dir: str, extensions: list[str]) -> list[str]:
     filenames = []
     for root, dirs, files in walk(input_dir):
         for filename in files:
@@ -32,7 +32,7 @@ def collect_filenames(input_dir: str, extensions: list):
                 filenames.append(join(root, filename).replace("\\","/"))
     return filenames
 
-def getFilePaths(input_dir: list, extensions: list):
+def getFilePaths(input_dir: list[str], extensions: list[str]) -> list[str]:
     filepaths = collect_filenames(input_dir, extensions)
 
     if '.sm' in extensions:
@@ -40,7 +40,7 @@ def getFilePaths(input_dir: list, extensions: list):
 
     return filepaths
 
-def checkFilePaths(sm_filepaths):
+def checkFilePaths(sm_filepaths: list[str]) -> None:
     # checks for static bpm in the .sm file
     # and removes filepath from list if not
     for sm_file in sm_filepaths:
