@@ -1,16 +1,19 @@
 from collections import defaultdict
 from re import sub, split
+from typing import Any
 
 from smdatatools.components.measure import Measure
 
-class InputProcessor:
 
-    def convert_note(line):                                                      
+class InputProcessor:
+    @staticmethod
+    def convert_note(line: str) -> str:
         return sub('4', '1', sub('[MKLF]', '0', line))    #replaces extra notes: M, K, L, F; replaces 4 note
 
-    def parse_sm_input(sm_file):
-        note_data = defaultdict(list)
-        note_data['notes'] = defaultdict(list) # notes are paired with each difficulty
+    @staticmethod
+    def parse_sm_input(sm_file: list[str]) -> tuple[dict[str, Any], bool]:
+        note_data: dict[str, Any] = defaultdict(list)
+        note_data['notes']: dict[str, Any] = defaultdict(list)  # notes are paired with each difficulty
         current_difficulty = ''
         measure         = []
         measure_index   = 0
@@ -72,11 +75,12 @@ class InputProcessor:
                             measure.append(note) # adds note if found
                         else:
                             measure.append(None)
-                
+
         return note_data, valid
 
-    def parse_txt_input(txt_file):
-        note_data = defaultdict(list)
+    @staticmethod
+    def parse_txt_input(txt_file: list[str]) -> dict[str, Any]:
+        note_data: dict[str, Any] = defaultdict(list)
         note_data['notes'] = defaultdict(list)
         current_difficulty = ''
         notes_and_timings = []
@@ -105,5 +109,5 @@ class InputProcessor:
                 else:
                     notes_and_timings.append(line)
         note_data['notes'][current_difficulty].extend(notes_and_timings)
-    
+
         return note_data
