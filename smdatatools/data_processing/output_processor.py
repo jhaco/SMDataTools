@@ -1,14 +1,15 @@
 from collections import defaultdict
+from typing import Any
 
 class OutputProcessor:
-
-    def pregenerate_sm_output(file_name: str, note_data: defaultdict(list)) -> str:
+    @staticmethod
+    def pregenerate_sm_output(file_name: str, note_data: dict[str, Any]) -> str:
         # pre-generate .sm output data
         title  = '#TITLE:%s;\n' % note_data['title']
         artist = '#ARTIST:jhaco vs cpuguy96;\n'
         music  = '#MUSIC:%s.ogg;\n' % file_name
-        select = 'SELECTABLE:YES;\n'
-        bpm    = 'BPMS:0.000=%s;\n\n' % str(note_data['bpm'])
+        select = '#SELECTABLE:YES;\n'
+        bpm    = '#BPMS:0.000=%s;\n\n' % str(note_data['bpm'])
         notes = ''
 
         for difficulty in note_data['notes'].keys():
@@ -26,7 +27,8 @@ class OutputProcessor:
 
         return ''.join((title, artist, music, select, bpm, notes))
 
-    def pregenerate_txt_output(note_data: defaultdict(list)) -> str:
+    @staticmethod
+    def pregenerate_txt_output(note_data: dict[str, Any]) -> str:
         # pre-generate output data
         title = 'TITLE %s\n' % note_data['title']
         bpm   = 'BPM   %s\n' % str(note_data['bpm'])

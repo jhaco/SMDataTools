@@ -2,8 +2,8 @@ from functools import reduce
 from math import gcd, ceil
 
 class Measure:
-
-    def calculate_timing(measure: list[str], measure_index: int, bpm: float, offset: float) -> str:
+    @staticmethod
+    def calculate_timing(measure: list[str | None], measure_index: int, bpm: float, offset: float) -> list[str]:
         # calculate time in seconds for each line in the measure:
         #   BPM       = beats/minute -> BPS = beats/second = BPM/60
         #   measure   = 4 beats = 4 * 1/4th notes     = 1 note
@@ -16,7 +16,8 @@ class Measure:
         # returns the note/timing pair, if the note exists
         return [measure[i] + ' ' + str(i * note_256 * fraction_256 + measure_timing - offset) for i, is_set in enumerate(measure) if is_set != None]
 
-    def find_gcd(note_positions) -> int:
+    @staticmethod
+    def find_gcd(note_positions: list[int]) -> int:
         # attempts to fit the note positions into either a 
         # 256, 128, 64, 32, 16, 8 or 4 note measure based on spacing 
         # found by getting the greatest common denominator
@@ -30,6 +31,7 @@ class Measure:
     
         return int(gcd_gap)
 
+    @staticmethod
     def generate_measure(notes: list[str], note_positions: list[int]) -> list[str]:
     
         # we'll want to trim as much output as possible
@@ -46,6 +48,7 @@ class Measure:
 
         return generated_measure
 
+    @staticmethod
     def fit_notes_to_measure(notes: list[str], timings: list[float], seconds_1_256: float) -> list[str]:
         # if no data is passed, generate current measure
         # as "empty" with the smallest size
@@ -78,6 +81,7 @@ class Measure:
 
         return measure
 
+    @staticmethod
     def place_notes(notes_and_timings: list[str], bpm: float) -> list[str]:
         placed_notes = []
         if not notes_and_timings:

@@ -1,6 +1,7 @@
 from os import walk
 from os.path import join, split, splitext
 from re import sub
+from typing import Collection
 
 def read_file(filename: str) -> list[str]:
     file_data = []
@@ -23,7 +24,7 @@ def strip_filename(filename: str) -> str:
     tail = splitext(tail)[0]
     return sub(' ', '_', sub('[^a-z0-9-_ ]', '', tail.lower()))
 
-def collect_filenames(input_dir: str, extensions: list[str]) -> list[str]:
+def collect_filenames(input_dir: str, extensions: Collection[str]) -> list[str]:
     filenames = []
     for root, dirs, files in walk(input_dir):
         for filename in files:
@@ -32,7 +33,7 @@ def collect_filenames(input_dir: str, extensions: list[str]) -> list[str]:
                 filenames.append(join(root, filename).replace("\\","/"))
     return filenames
 
-def getFilePaths(input_dir: list[str], extensions: list[str]) -> list[str]:
+def getFilePaths(input_dir: str, extensions: Collection[str]) -> list[str]:
     filepaths = collect_filenames(input_dir, extensions)
 
     if '.sm' in extensions:

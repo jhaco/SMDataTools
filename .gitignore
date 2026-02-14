@@ -134,3 +134,6 @@ dmypy.json
 
 # Visual Studio
 .vs/
+
+# Pycharm
+/.idea
