@@ -19,12 +19,11 @@ class Options:
         return data
 
     @staticmethod
-    def write_DatatoSM(data: DataHandler, filepath: str):
+    def write_DatatoSM(data: DataHandler, filepath: str) -> None:
         filename = strip_filename(filepath)
         ostr = OutputProcessor.pregenerate_sm_output(filename, data.processed_data)
         write_file(ostr, filepath)
 
-    @staticmethod
-    def write_DatatoTXT(data: DataHandler, filepath: str):
+    def write_DatatoTXT(data: DataHandler, filepath: str) -> None:
         ostr = OutputProcessor.pregenerate_txt_output(data.note_data)
         write_file(ostr, filepath)

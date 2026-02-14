@@ -9,7 +9,7 @@ def read_file(filename: str) -> list[str]:
         file_data = f.read().splitlines()
     return file_data
 
-def write_file(output_data: str, filename: str):
+def write_file(output_data: str, filename: str) -> None:
     with open(filename, 'w') as f:
         f.write(output_data)
 
@@ -41,7 +41,7 @@ def getFilePaths(input_dir: str, extensions: Collection[str]) -> list[str]:
 
     return filepaths
 
-def checkFilePaths(sm_filepaths: list[str]):
+def checkFilePaths(sm_filepaths: list[str]) -> None:
     # checks for static bpm in the .sm file
     # and removes filepath from list if not
     for sm_file in sm_filepaths:

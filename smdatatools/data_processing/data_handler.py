@@ -15,7 +15,7 @@ class DataHandler:
         self.processed_data: dict[str, Any] = defaultdict(list)
         self.valid = True
 
-    def process_data_to_sm_format(self):
+    def process_data_to_sm_format(self) -> None:
 
         self.processed_data['title'] = self.note_data['title']
         self.processed_data['bpm'] = float(self.note_data['bpm'])
