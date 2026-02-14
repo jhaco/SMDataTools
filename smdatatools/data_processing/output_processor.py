@@ -7,8 +7,8 @@ class OutputProcessor:
         title  = '#TITLE:%s;\n' % note_data['title']
         artist = '#ARTIST:jhaco vs cpuguy96;\n'
         music  = '#MUSIC:%s.ogg;\n' % file_name
-        select = 'SELECTABLE:YES;\n'
-        bpm    = 'BPMS:0.000=%s;\n\n' % str(note_data['bpm'])
+        select = '#SELECTABLE:YES;\n'
+        bpm    = '#BPMS:0.000=%s;\n\n' % str(note_data['bpm'])
         notes = ''
 
         for difficulty in note_data['notes'].keys():
