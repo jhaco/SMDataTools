@@ -1,4 +1,5 @@
 from collections import defaultdict
+from typing import Any
 
 from smdatatools.common.file_utils import strip_filename
 from smdatatools.components.measure import Measure
@@ -6,12 +7,12 @@ from smdatatools.components.measure import Measure
 class DataHandler:
     # each Data Handler will represent the data of one .sm/.txt file
 
-    def __init__(self, filepath):
+    def __init__(self, filepath: str):
         self.sm_path = filepath
         self.filename = strip_filename(filepath)
 
-        self.note_data = defaultdict(list)
-        self.processed_data = defaultdict(list)
+        self.note_data: dict[str, Any] = defaultdict(list)
+        self.processed_data: dict[str, Any] = defaultdict(list)
         self.valid = True
 
     def process_data_to_sm_format(self):
