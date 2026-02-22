@@ -8,7 +8,7 @@ from smdatatools.components.measure import Measure
 class InputProcessor:
     @staticmethod
     def convert_note(line: str) -> str:
-        return sub('4', '1', sub('[MKLF]', '0', line))    #replaces extra notes: M, K, L, F; replaces 4 note
+        return sub('4', '2', sub('[MKLF]', '0', line))    #replaces extra notes: M, K, L, F; replaces 4 note
 
     @staticmethod
     def parse_sm_input(sm_file: list[str]) -> tuple[dict[str, Any], bool]:
