@@ -2,7 +2,7 @@ from os import walk
 from os.path import join, splitext, dirname, realpath
 import shutil
 
-def get_folders_to_delete():
+def get_folders_to_delete() -> list[str]:
 	to_delete  = []
 	dir_path = dirname(realpath(__file__))
 	print(dir_path)
